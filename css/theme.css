@@ -1,0 +1,75 @@
+/* Plaid-inspired palette */
+:root {
+  --plaid-blue: #0A2540;
+  --plaid-green: #23B574;
+  --plaid-teal: #00B5AD;
+  --plaid-light-blue: #E9F5FB;
+  --plaid-gray: #F6F7F9;
+  --plaid-white: #fff;
+}
+
+/* Body background */
+body {
+  background-color: var(--plaid-gray);
+}
+
+/* Navbar */
+.navbar {
+  background: var(--plaid-blue) !important;
+}
+.navbar-brand,
+.navbar-nav .nav-link,
+.navbar-toggler {
+  color: var(--plaid-light-blue) !important;
+}
+.navbar-nav .nav-link.active,
+.navbar-nav .nav-link:focus,
+.navbar-nav .nav-link:hover {
+  color: var(--plaid-green) !important;
+}
+
+/* Header gradient */
+.bg-gradient-primary {
+  background: linear-gradient(90deg, var(--plaid-blue) 0%, var(--plaid-teal) 100%) !important;
+}
+
+/* Card styles */
+.card {
+  border: none;
+  background: var(--plaid-white);
+}
+.text-primary {
+  color: var(--plaid-blue) !important;
+}
+.text-success {
+  color: var(--plaid-green) !important;
+}
+.text-warning {
+  color: var(--plaid-teal) !important;
+}
+
+/* Buttons */
+.btn-primary,
+.btn-success,
+.btn-outline-primary {
+  background-color: var(--plaid-green) !important;
+  border-color: var(--plaid-green) !important;
+  color: var(--plaid-white) !important;
+}
+.btn-primary:hover,
+.btn-success:hover,
+.btn-outline-primary:hover {
+  background-color: var(--plaid-blue) !important;
+  border-color: var(--plaid-blue) !important;
+  color: var(--plaid-white) !important;
+}
+
+/* Links */
+a, a:hover {
+  color: var(--plaid-teal);
+}
+
+/* Footer */
+footer.bg-dark {
+  background: var(--plaid-blue) !important;
+}
