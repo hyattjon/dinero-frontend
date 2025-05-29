@@ -73,3 +73,33 @@ a, a:hover {
 footer.bg-dark {
   background: var(--plaid-blue) !important;
 }
+
+/* Add to your existing CSS */
+#loading-state {
+    background: var(--plaid-white);
+    transition: all 0.3s ease;
+}
+
+#loading-state .spinner-border {
+    width: 3rem;
+    height: 3rem;
+    color: var(--plaid-green);
+}
+
+#card-recommendations {
+    background: var(--plaid-white);
+    transition: all 0.3s ease;
+}
+
+.recommendation-card {
+    border-left: 4px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.recommendation-card:hover {
+    transform: translateX(5px);
+}
+
+.recommendation-card.best-match {
+    border-left-color: var(--plaid-green);
+}
