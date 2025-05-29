@@ -6,7 +6,7 @@
 
 const BACKEND_URL = window.location.hostname === 'localhost' 
     ? 'http://localhost:5001'
-    : 'https://dinero-backend.herokuapp.com';  
+    : 'https://dinero-backend-deeac4fe8d4e.herokuapp.com';  
 
 // This file is intentionally blank
 // Use this file to add JavaScript to your project
