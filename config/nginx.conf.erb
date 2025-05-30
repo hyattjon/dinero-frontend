@@ -23,7 +23,13 @@ http {
 
     server {
         listen <%= ENV["PORT"] %>;
-        server_name _;
+        server_name dinero-frontend-500b23e1674a.herokuapp.com;
+        
+        # Force SSL
+        if ($http_x_forwarded_proto != "https") {
+            return 301 https://$host$request_uri;
+        }
+
         root /app;
         index index.html;
 
@@ -31,6 +37,8 @@ http {
             try_files $uri $uri/ /index.html;
             add_header Strict-Transport-Security "max-age=31557600";
             add_header Access-Control-Allow-Origin "*";
+            add_header X-Frame-Options "DENY";
+            add_header X-Content-Type-Options "nosniff";
         }
 
         location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
