@@ -23,11 +23,16 @@ http {
 
     server {
         listen <%= ENV["PORT"] %>;
-        server_name dinero-frontend-500b23e1674a.herokuapp.com;
+        server_name dinero-frontend-500b23e1674a.herokuapp.com www.cardmatcher.net cardmatcher.net;
         
-        # Force SSL
+        # Force SSL and www redirect
         if ($http_x_forwarded_proto != "https") {
             return 301 https://$host$request_uri;
+        }
+        
+        # Redirect non-www to www
+        if ($host = cardmatcher.net) {
+            return 301 https://www.$host$request_uri;
         }
 
         root /app;
