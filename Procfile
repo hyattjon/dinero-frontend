@@ -1,1 +1,1 @@
-web: streamlit run credit_card.py --server.port $PORT --server.address 0.0.0.0
+web: bin/start-nginx
