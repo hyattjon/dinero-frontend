@@ -12,29 +12,20 @@ http {
     gzip_types text/plain text/css application/json application/javascript;
 
     server_tokens off;
+    port_in_redirect off;
 
     log_format l2met 'measure#nginx.service=$request_time request_id=$http_x_request_id';
-    access_log <%= ENV['NGINX_ACCESS_LOG_PATH'] || 'logs/nginx/access.log' %> l2met;
-    error_log <%= ENV['NGINX_ERROR_LOG_PATH'] || 'logs/nginx/error.log' %>;
+    access_log stdout;
+    error_log stderr;
 
     include mime.types;
     default_type application/octet-stream;
     sendfile on;
+    keepalive_timeout 5;
 
     server {
-        listen <%= ENV["PORT"] %>;
-        server_name dinero-frontend-500b23e1674a.herokuapp.com www.cardmatcher.net cardmatcher.net;
-        
-        # Force SSL and www redirect
-        if ($http_x_forwarded_proto != "https") {
-            return 301 https://$host$request_uri;
-        }
-        
-        # Redirect non-www to www
-        if ($host = cardmatcher.net) {
-            return 301 https://www.$host$request_uri;
-        }
-
+        listen <%= ENV["PORT"] %> default_server;
+        server_name _;
         root /app;
         index index.html;
 
@@ -46,9 +37,9 @@ http {
             add_header X-Content-Type-Options "nosniff";
         }
 
-        location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
+        location ~* \.(js|css|png|jpg|jpeg|gif|ico|woff2)$ {
             expires max;
-            add_header Cache-Control public;
+            add_header Cache-Control "public, no-transform";
         }
     }
 }
