@@ -5,6 +5,19 @@
     "/**": "index.html"
   },
   "https_only": true,
+  "headers": {
+    "/": {
+      "Cache-Control": "no-store, no-cache",
+      "X-Frame-Options": "DENY",
+      "X-Content-Type-Options": "nosniff"
+    },
+    "/js/*.js": {
+      "Cache-Control": "public, max-age=31536000"
+    },
+    "/css/*.css": {
+      "Cache-Control": "public, max-age=31536000"
+    }
+  },
   "proxies": {
     "/api/": {
       "origin": "https://dinero-backend-deeac4fe8d4e.herokuapp.com"

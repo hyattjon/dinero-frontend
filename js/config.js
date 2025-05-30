@@ -8,4 +8,4 @@ const getConfig = () => {
   };
 };
 
-const CONFIG = getConfig();
+window.CONFIG = getConfig();
