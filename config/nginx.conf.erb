@@ -1,5 +1,5 @@
 daemon off;
-worker_processes auto;
+worker_processes 1;
 
 events {
     worker_connections 1024;
@@ -8,13 +8,9 @@ events {
 http {
     include mime.types;
     default_type application/octet-stream;
-    port_in_redirect off;
 
     access_log stdout;
     error_log stderr;
-
-    gzip on;
-    gzip_types text/plain text/css application/json application/javascript;
 
     server {
         listen <%= ENV['PORT'] %>;
@@ -22,19 +18,13 @@ http {
         root /app;
         index index.html;
 
-        location /health {
-            return 200 'ok';
+        location / {
+            try_files $uri $uri/ /index.html;
         }
 
         location /api/ {
             proxy_pass https://dinero-backend-deeac4fe8d4e.herokuapp.com/;
             proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_read_timeout 60;
-        }
-
-        location / {
-            try_files $uri $uri/ /index.html;
         }
 
         location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
