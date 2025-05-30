@@ -1,0 +1,38 @@
+daemon off;
+worker_processes auto;
+
+events {
+    use epoll;
+    accept_mutex on;
+    worker_connections 1024;
+}
+
+http {
+    gzip on;
+    gzip_comp_level 2;
+    gzip_min_length 512;
+    gzip_types text/plain text/css application/json application/javascript;
+
+    server_tokens off;
+
+    log_format l2met 'measure#nginx.service=$request_time request_id=$http_x_request_id';
+    access_log logs/nginx/access.log l2met;
+    error_log logs/nginx/error.log;
+
+    include mime.types;
+    default_type application/octet-stream;
+    sendfile on;
+
+    server {
+        listen <%= ENV["PORT"] %>;
+        server_name _;
+        root /app;
+        index index.html;
+
+        location / {
+            try_files $uri $uri/ /index.html;
+            add_header Strict-Transport-Security "max-age=31557600";
+            add_header Access-Control-Allow-Origin "*";
+        }
+    }
+}
