@@ -145,8 +145,10 @@
     <script src="js/scripts.js"></script>
     <!-- Plaid Link JS -->
     <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+    <!-- Add this before your other scripts -->
+    <script src="js/config.js"></script>
     <script>
-        const BACKEND_URL = 'https://dinero-backend-deeac4fe8d4e.herokuapp.com';
+        const BACKEND_URL = CONFIG.BACKEND_URL;
         const statusEl = document.getElementById('plaid-status');
 
         function updateStatus(message, isError = false) {
