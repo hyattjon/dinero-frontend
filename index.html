@@ -148,7 +148,6 @@
     <!-- Add this before your other scripts -->
     <script src="js/config.js"></script>
     <script>
-        const BACKEND_URL = CONFIG.BACKEND_URL;
         const statusEl = document.getElementById('plaid-status');
 
         function updateStatus(message, isError = false) {
@@ -161,7 +160,7 @@
                 updateStatus("Initializing Plaid...");
                 
                 // Get link token
-                const response = await fetch(`${BACKEND_URL}/create_link_token`, {
+                const response = await fetch(`${CONFIG.BACKEND_URL}/create_link_token`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
