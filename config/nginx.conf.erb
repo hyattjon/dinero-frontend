@@ -20,35 +20,35 @@ http {
     server {
         listen <%= ENV["PORT"] %>;
         server_name _;
-
         root /app;
         
-        # Add CORS headers for all responses
-        add_header 'Access-Control-Allow-Origin' '*';
-        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
-        add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization';
-        
-        # Handle OPTIONS preflight requests
-        if ($request_method = 'OPTIONS') {
-            add_header 'Access-Control-Allow-Origin' '*';
-            add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
-            add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization';
-            add_header 'Access-Control-Max-Age' '1728000';
-            add_header 'Content-Type' 'text/plain charset=UTF-8';
-            add_header 'Content-Length' '0';
-            return 204;
-        }
-
         # Static files caching
         location ~* \.(jpg|jpeg|png|gif|ico|css|js)$ {
             expires 7d;
             add_header Cache-Control "public";
+            add_header Access-Control-Allow-Origin '*';
+            add_header Access-Control-Allow-Methods 'GET, POST, OPTIONS';
+            add_header Access-Control-Allow-Headers 'Content-Type, Authorization';
         }
 
+        # Handle preflight OPTIONS requests
         location / {
+            if ($request_method = 'OPTIONS') {
+                add_header 'Access-Control-Allow-Origin' '*';
+                add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+                add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization';
+                add_header 'Access-Control-Max-Age' '1728000';
+                add_header 'Content-Type' 'text/plain charset=UTF-8';
+                add_header 'Content-Length' '0';
+                return 204;
+            }
+            
+            # Standard requests
+            add_header 'Access-Control-Allow-Origin' '*';
             try_files $uri $uri/ /index.html;
         }
 
+        # Proxy API requests to backend
         location /api/ {
             proxy_pass https://dinero-backend-deeac4fe8d4e.herokuapp.com/;
             proxy_http_version 1.1;
@@ -57,8 +57,7 @@ http {
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
             
-            # Additional CORS headers for API requests
-            proxy_hide_header 'Access-Control-Allow-Origin';
+            # CORS headers for API
             add_header 'Access-Control-Allow-Origin' '*' always;
         }
     }
