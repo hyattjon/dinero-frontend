@@ -1,0 +1,11 @@
+{
+  "name": "dinero-frontend",
+  "version": "1.0.0",
+  "description": "Dinero Frontend Application",
+  "engines": {
+    "node": "18.x"
+  },
+  "scripts": {
+    "start": "echo 'Static site, use buildpack to serve'"
+  }
+}
