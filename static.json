@@ -1,0 +1,18 @@
+{
+  "root": "./",
+  "routes": {
+    "/**": "index.html"
+  },
+  "proxies": {
+    "/api/": {
+      "origin": "https://dinero-backend-deeac4fe8d4e.herokuapp.com"
+    }
+  },
+  "headers": {
+    "/**": {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization"
+    }
+  }
+}
