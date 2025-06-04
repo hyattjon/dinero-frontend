@@ -19,18 +19,13 @@ http {
     
     server {
         listen <%= ENV["PORT"] %>;
-        server_name cardmatcher.net www.cardmatcher.net;
+        server_name cardmatcher.net www.cardmatcher.net _;
+        root /app;
         
         # Force HTTPS redirect
         if ($http_x_forwarded_proto != "https") {
             return 301 https://$host$request_uri;
         }
-    }
-
-    server {
-        listen <%= ENV["PORT"] %>;
-        server_name _;
-        root /app;
         
         # Static files caching
         location ~* \.(jpg|jpeg|png|gif|ico|css|js)$ {
