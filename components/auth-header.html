@@ -1,0 +1,69 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <div class="container px-4 px-lg-5">
+        <a class="navbar-brand fw-bold" href="dashboard.html">
+            <i class="bi bi-credit-card-2-front-fill me-2"></i>Card Matcher
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" id="nav-dashboard" href="dashboard.html">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="nav-history" href="history.html">History</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="username" role="button" 
+                       data-bs-toggle="dropdown" aria-expanded="false">Account</a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="username">
+                        <li><a class="dropdown-item" href="profile.html">Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" id="logout-btn">Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<script>
+    // Set username and highlight active page
+    (function() {
+        // Set username from localStorage
+        const username = document.getElementById('username');
+        if (username) {
+            username.textContent = localStorage.getItem('user_name') || 'Account';
+        }
+        
+        // Add logout functionality
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('user_name');
+                window.location.href = 'login.html';
+            });
+        }
+        
+        // Highlight active page
+        const currentPage = window.location.pathname.split('/').pop();
+        const navLinks = {
+            'dashboard.html': 'nav-dashboard',
+            'history.html': 'nav-history',
+            'analysis.html': 'nav-dashboard'
+        };
+        
+        const activeNavId = navLinks[currentPage];
+        if (activeNavId) {
+            const navLink = document.getElementById(activeNavId);
+            if (navLink) {
+                navLink.classList.add('active');
+                navLink.setAttribute('aria-current', 'page');
+            }
+        }
+    })();
+</script>

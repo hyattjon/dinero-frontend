@@ -12,7 +12,11 @@ const CONFIG = {
     forceLocal: function() {
         this.BACKEND_URL = 'http://localhost:5001';
         console.log('⚠️ Forcing local backend connection');
-    }
+    },
+
+    // Additional configuration
+    PLAID_ENV: "sandbox",
+    APP_NAME: "Card Matcher"
 };
 
 console.log(`🔌 API Endpoint: ${CONFIG.BACKEND_URL} (${CONFIG.IS_LOCAL ? 'local' : 'production'})`);
