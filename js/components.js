@@ -24,6 +24,17 @@ document.addEventListener('DOMContentLoaded', async function() {
                     document.body.appendChild(newScript);
                     script.remove();
                 });
+                
+                // Initialize Bootstrap components after loading
+                setTimeout(() => {
+                    if (typeof bootstrap !== 'undefined') {
+                        // Initialize dropdowns
+                        const dropdownElementList = document.querySelectorAll('.dropdown-toggle');
+                        dropdownElementList.forEach(function (dropdownToggleEl) {
+                            new bootstrap.Dropdown(dropdownToggleEl);
+                        });
+                    }
+                }, 100);
             }
         } catch (error) {
             console.error(`Error loading component from ${componentPath}:`, error);

@@ -15,12 +15,6 @@
                 <li class="nav-item">
                     <a class="nav-link" id="nav-cards" href="cards.html">Cards</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="nav-about" href="about.html">How It Works</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="nav-contact" href="contact.html">Contact</a>
-                </li>
                 <li class="nav-item d-flex align-items-center ms-2">
                     <a class="btn btn-outline-light btn-sm" href="login.html">Login</a>
                 </li>
@@ -35,9 +29,7 @@
         const currentPage = window.location.pathname.split('/').pop() || 'index.html';
         const navLinks = {
             'index.html': 'nav-home',
-            'cards.html': 'nav-cards',
-            'about.html': 'nav-about',
-            'contact.html': 'nav-contact'
+            'cards.html': 'nav-cards'
         };
         
         const activeNavId = navLinks[currentPage];
