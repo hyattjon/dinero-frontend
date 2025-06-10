@@ -143,8 +143,8 @@ function checkAuthStatus() {
     }
 }
 
-// Google Sign-In Handler
-function handleGoogleSignIn(response) {
+// Expose the function globally so Google can call it
+window.handleGoogleSignIn = function(response) {
     // Send the ID token to your backend
     const id_token = response.credential;
     
@@ -153,8 +153,7 @@ function handleGoogleSignIn(response) {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ token: id_token }),
-        credentials: 'include'
+        body: JSON.stringify({ token: id_token })
     })
     .then(response => response.json())
     .then(data => {
@@ -165,7 +164,7 @@ function handleGoogleSignIn(response) {
             window.location.href = 'dashboard.html';
         } else {
             document.getElementById('login-message').innerHTML = 
-                `<div class="alert alert-danger">${data.error}</div>`;
+                `<div class="alert alert-danger">${data.error || 'Authentication failed'}</div>`;
         }
     })
     .catch(error => {
@@ -173,7 +172,7 @@ function handleGoogleSignIn(response) {
             `<div class="alert alert-danger">Sign-in failed. Please try again.</div>`;
         console.error('Error:', error);
     });
-}
+};
 
 // Logout functionality
 function logout() {

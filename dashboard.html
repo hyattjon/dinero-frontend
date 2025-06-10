@@ -179,11 +179,13 @@
                     // No recommendations yet
                     document.getElementById('recommendations-container').style.display = 'block';
                     document.getElementById('recommendations-container').innerHTML = `
-                        <div class="card-body">
+                        <div class="card-body text-center py-4">
                             <div class="alert alert-info">
-                                <h4>No Recommendations Yet</h4>
-                                <p>${data.message || 'Connect your bank to get personalized card recommendations.'}</p>
-                                <button class="btn btn-primary mt-3" id="connectBankBtn">Connect Bank</button>
+                                <h4 class="mb-3">No Recommendations Yet</h4>
+                                <p class="mb-4">${data.message || 'Connect your bank to get personalized card recommendations.'}</p>
+                                <div class="d-flex justify-content-center">
+                                    <button class="btn btn-primary px-4" id="connectBankBtn">Connect with Plaid</button>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -202,11 +204,13 @@
                 
                 recommendationsContainer.style.display = 'block';
                 recommendationsContainer.innerHTML = `
-                    <div class="card-body">
+                    <div class="card-body text-center py-4">
                         <div class="alert alert-warning">
-                            <h4>Unable to Load Recommendations</h4>
-                            <p>We couldn't retrieve your recommendations. Please try connecting your bank again.</p>
-                            <button class="btn btn-primary mt-3" id="connectBankBtn">Connect Bank</button>
+                            <h4 class="mb-3">Unable to Find Recommendations</h4>
+                            <p class="mb-4">We couldn't retrieve any recommendations for your account. This could be because you haven't connected your bank account yet, or there was an issue with the connection.</p>
+                            <div class="d-flex justify-content-center">
+                                <button class="btn btn-primary px-4" id="connectBankBtn">Connect with Plaid</button>
+                            </div>
                         </div>
                     </div>
                 `;

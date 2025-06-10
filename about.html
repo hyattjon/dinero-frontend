@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
     <link href="css/theme.css" rel="stylesheet" />
+    <script src="js/config.js"></script>
 </head>
 <body>
     <!-- Header will be loaded here -->
@@ -22,7 +23,7 @@
                             <h1 class="display-5 fw-bold text-primary mb-3">How It Works</h1>
                             <p class="lead text-secondary mb-4" style="font-size:1.2rem;">
                                 Credit Card Matcher helps you find the best credit card for your unique spending habits. 
-                                When you click "Connect with Plaid," you securely link your bank account using Plaid’s trusted platform. 
+                                When you click "Connect with Plaid," you securely link your bank account using Plaid's trusted platform. 
                                 Our app then analyzes your past year of transactions (read-only, never stored) and compares your real spending patterns with hundreds of credit card offers from rewardscc.com. 
                                 We calculate how much cashback or rewards you could have earned with each card, so you can see which cards would have given you the most value—no guesswork, just data-driven recommendations.
                             </p>
@@ -38,10 +39,31 @@
             </div>
         </div>
     </header>
+    
     <!-- Footer will be loaded here -->
     <div id="footer-container"></div>
 
+    <!-- Bootstrap core JS - REQUIRED for dropdown menu functionality -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    
     <!-- Components loader -->
     <script src="js/components.js"></script>
+    
+    <script>
+        // Ensure dropdowns are initialized after components are loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Small delay to ensure components are fully loaded
+            setTimeout(function() {
+                // Check if bootstrap is defined
+                if (typeof bootstrap !== 'undefined') {
+                    // Initialize any dropdowns on the page
+                    var dropdownElementList = document.querySelectorAll('.dropdown-toggle');
+                    dropdownElementList.forEach(function(dropdownToggleEl) {
+                        new bootstrap.Dropdown(dropdownToggleEl);
+                    });
+                }
+            }, 200);
+        });
+    </script>
 </body>
 </html>

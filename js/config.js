@@ -16,7 +16,10 @@ const CONFIG = {
 
     // Additional configuration
     PLAID_ENV: "sandbox",
-    APP_NAME: "Card Matcher"
+    APP_NAME: "Card Matcher",
+
+    // Google API configuration
+    GOOGLE_CLIENT_ID: "532917175955-6juljj8mjulvtmotmb2ga25q73qnl1a0.apps.googleusercontent.com"  // Your Google client ID
 };
 
 console.log(`🔌 API Endpoint: ${CONFIG.BACKEND_URL} (${CONFIG.IS_LOCAL ? 'local' : 'production'})`);
