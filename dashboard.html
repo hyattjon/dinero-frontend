@@ -119,20 +119,22 @@
         }
         
         function fetchStoredRecommendations() {
+            // Get the auth token from localStorage
             const token = localStorage.getItem('auth_token');
+            console.log("Fetching recommendations with token:", token);
+
             if (!token) {
                 console.error("No auth token found");
                 window.location.href = 'login.html';
                 return;
             }
-            
-            console.log("Fetching recommendations with token:", token.substring(0, 10) + "...");
-            
+
+            // Make the API request with the token in the Authorization header
             fetch(`${CONFIG.BACKEND_URL}/get_stored_recommendations`, {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 }
             })
             .then(response => {
