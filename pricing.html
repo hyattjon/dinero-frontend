@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="Credit Card Matcher - Pricing Plans" />
+    <meta name="author" content="Card Matcher" />
+    <title>Subscription Plans | Card Matcher</title>
+    <link rel="icon" type="image/x-icon" href="assets/credit_card.png" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="css/styles.css" rel="stylesheet" />
+    <link href="css/theme.css" rel="stylesheet" />
+    <script src="js/config.js"></script>
+    <script>
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('auth_token');
+            if (!token) {
+                // Store current page as redirect target
+                localStorage.setItem('redirect_after_login', 'pricing.html');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Load subscription info
+            loadSubscriptionInfo();
+            
+            // Load plans
+            loadPlans();
+        });
+        
+        async function loadSubscriptionInfo() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch(`${CONFIG.BACKEND_URL}/subscription`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const sub = data.subscription;
+                    // Update UI to reflect current subscription
+                    const currentPlanEl = document.getElementById('current-plan');
+                    if (currentPlanEl) {
+                        currentPlanEl.textContent = sub.plan.name;
+                        
+                        // If user has active subscription beyond free tier, show manage button
+                        if (sub.tier !== 'free' && sub.status === 'active') {
+                            document.getElementById('subscription-controls').innerHTML = `
+                                <div class="alert alert-success">
+                                    <p>You are currently on the <strong>${sub.plan.name}</strong> plan.</p>
+                                    <p>Your subscription renews on ${new Date(sub.current_period_end).toLocaleDateString()}.</p>
+                                    <button id="manage-subscription-btn" class="btn btn-outline-primary">Manage Subscription</button>
+                                </div>
+                            `;
+                            
+                            document.getElementById('manage-subscription-btn').addEventListener('click', manageSubscription);
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading subscription:', error);
+            }
+        }
+        
+        async function loadPlans() {
+            try {
+                const response = await fetch(`${CONFIG.BACKEND_URL}/plans`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayPlans(data.plans);
+                }
+            } catch (error) {
+                console.error('Error loading plans:', error);
+            }
+        }
+        
+        function displayPlans(plans) {
+            const plansContainer = document.getElementById('plans-container');
+            
+            // Define the specific display order
+            const displayOrder = ['free', 'basic', 'pro'];
+            
+            let html = '';
+            
+            // Iterate in the defined order instead of using Object.entries
+            for (const planId of displayOrder) {
+                const plan = plans[planId];
+                if (!plan) continue; // Skip if plan doesn't exist
+                
+                const featuresList = plan.features.map(feature => 
+                    `<li><i class="bi bi-check-circle-fill text-success me-2"></i>${feature}</li>`
+                ).join('');
+                
+                const priceText = plan.price === 0 ? 'Free' : `$${plan.price}/month`;
+                const buttonClass = planId === 'free' ? 'btn-outline-primary' : 'btn-primary';
+                const buttonText = planId === 'free' ? 'Current Plan' : 'Subscribe';
+                const buttonAction = planId === 'free' ? '' : `onclick="subscribeToPlan('${planId}')"`;
+                const isPopular = planId === 'basic' ? '<div class="badge bg-primary position-absolute" style="top: 0.5rem; right: 0.5rem">Most Popular</div>' : '';
+                
+                html += `
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card h-100 position-relative">
+                            ${isPopular}
+                            <div class="card-header bg-white py-3">
+                                <h4 class="my-0 fw-bold">${plan.name}</h4>
+                            </div>
+                            <div class="card-body">
+                                <h1 class="card-title pricing-card-title mb-4">${priceText}</h1>
+                                <ul class="list-unstyled text-start">
+                                    ${featuresList}
+                                </ul>
+                            </div>
+                            <div class="card-footer bg-white py-3">
+                                <button type="button" class="btn ${buttonClass} btn-lg w-100" ${buttonAction}>${buttonText}</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            plansContainer.innerHTML = html;
+        }
+        
+        async function subscribeToPlan(planId) {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch(`${CONFIG.BACKEND_URL}/create-checkout-session`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        plan_id: planId
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Redirect to Stripe checkout
+                    const stripe = Stripe(CONFIG.STRIPE_PUBLISHABLE_KEY);
+                    stripe.redirectToCheckout({
+                        sessionId: data.session_id
+                    });
+                }
+            } catch (error) {
+                console.error('Error creating checkout session:', error);
+                alert('Unable to process subscription. Please try again later.');
+            }
+        }
+        
+        async function manageSubscription() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch(`${CONFIG.BACKEND_URL}/customer-portal`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Redirect to customer portal
+                    window.location.href = data.url;
+                }
+            } catch (error) {
+                console.error('Error opening customer portal:', error);
+                alert('Unable to access subscription management. Please try again later.');
+            }
+        }
+    </script>
+</head>
+<body>
+    <!-- Header will be loaded here -->
+    <div id="header-container"></div>
+    
+    <!-- Header-->
+    <header class="bg-gradient-primary py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card shadow-lg border-0">
+                        <div class="card-body text-center py-5">
+                            <h1 class="display-4 fw-bold text-primary mb-3">Choose Your Plan</h1>
+                            <p class="lead text-secondary mb-4">Find the perfect subscription for your needs</p>
+                            <div id="subscription-controls">
+                                <p>You are currently on the <span id="current-plan">Free</span> plan.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Pricing Section -->
+    <section class="py-5">
+        <div class="container px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center" id="plans-container">
+                <!-- Plans will be loaded here dynamically -->
+                <div class="col-12 text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading subscription plans...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer will be loaded here -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap core JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Stripe JS -->
+    <script src="https://js.stripe.com/v3/"></script>
+    <!-- Components loader -->
+    <script src="js/components.js"></script>
+</body>
+</html>
