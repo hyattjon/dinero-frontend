@@ -145,6 +145,13 @@ function checkAuthStatus() {
 
 // Expose the function globally so Google can call it
 window.handleGoogleSignIn = function(response) {
+    // Clear any existing messages
+    document.getElementById('login-message').innerHTML = '';
+    
+    // Show loading message
+    document.getElementById('login-message').innerHTML = 
+        `<div class="alert alert-info">Signing in with Google...</div>`;
+    
     // Send the ID token to your backend
     const id_token = response.credential;
     
@@ -161,7 +168,27 @@ window.handleGoogleSignIn = function(response) {
             // Store token and redirect
             localStorage.setItem('auth_token', data.token);
             localStorage.setItem('user_name', data.name);
-            window.location.href = 'dashboard.html';
+            
+            // Check if this is a new user and show welcome message if needed
+            if (data.is_new_user) {
+                // Store a flag to show welcome message
+                localStorage.setItem('show_welcome', 'true');
+            }
+            
+            // Redirect to dashboard or the page they were trying to access
+            const redirectTo = localStorage.getItem('redirect_after_login') || 'dashboard.html';
+            localStorage.removeItem('redirect_after_login'); // Clean up
+            window.location.href = redirectTo;
+        } else if (data.is_new_user) {
+            // This is a special case where a new user couldn't be created
+            document.getElementById('login-message').innerHTML = 
+                `<div class="alert alert-warning">
+                    <h5>Welcome ${data.name || 'New User'}!</h5>
+                    <p>We need to create an account for you first.</p>
+                    <button class="btn btn-primary" onclick="createAccountFromGoogle('${data.email}', '${data.name}')">
+                        Create Your Account
+                    </button>
+                </div>`;
         } else {
             document.getElementById('login-message').innerHTML = 
                 `<div class="alert alert-danger">${data.error || 'Authentication failed'}</div>`;
@@ -169,15 +196,81 @@ window.handleGoogleSignIn = function(response) {
     })
     .catch(error => {
         document.getElementById('login-message').innerHTML = 
-            `<div class="alert alert-danger">Sign-in failed. Please try again.</div>`;
-        console.error('Error:', error);
+            `<div class="alert alert-danger">
+                <h5>Sign In Error</h5>
+                <p>Unable to sign in with Google. Please try again or create an account.</p>
+                <a href="register.html" class="btn btn-primary btn-sm">Create Account</a>
+            </div>`;
+        console.error('Google auth error:', error);
     });
 };
 
-// Logout functionality
-function logout() {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_name');
-    window.location.href = 'login.html';
+// Helper function to create account from Google info
+function createAccountFromGoogle(email, name) {
+    // Show loading
+    document.getElementById('login-message').innerHTML = 
+        `<div class="alert alert-info">Creating your account...</div>`;
+    
+    // Generate a random secure password for backend account
+    const password = Math.random().toString(36).slice(-12) + Math.random().toString(36).slice(-12);
+    
+    fetch(`${CONFIG.BACKEND_URL}/auth/register`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+            name: name || 'Card Matcher User',
+            email: email, 
+            password: password,
+            auth_provider: 'google'
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('login-message').innerHTML = 
+                `<div class="alert alert-success">
+                    <p>Account created successfully! You can now sign in with Google.</p>
+                    <div id="g_id_onload"
+                        data-client_id="532917175955-6juljj8mjulvtmotmb2ga25q73qnl1a0.apps.googleusercontent.com"
+                        data-callback="handleGoogleSignIn"
+                        data-auto_prompt="true">
+                    </div>
+                    <div class="g_id_signin"
+                        data-type="standard"
+                        data-size="large"
+                        data-theme="outline"
+                        data-text="sign_in_with"
+                        data-shape="rectangular"
+                        data-logo_alignment="left">
+                    </div>
+                </div>`;
+                
+            // Reload Google Sign-In button
+            google.accounts.id.initialize({
+                client_id: "532917175955-6juljj8mjulvtmotmb2ga25q73qnl1a0.apps.googleusercontent.com",
+                callback: handleGoogleSignIn
+            });
+            google.accounts.id.renderButton(
+                document.getElementById("g_id_signin"),
+                { theme: "outline", size: "large" }
+            );
+        } else {
+            document.getElementById('login-message').innerHTML = 
+                `<div class="alert alert-danger">
+                    <p>${data.error || 'Could not create account. Please try again.'}</p>
+                    <a href="register.html" class="btn btn-primary btn-sm">Register Manually</a>
+                </div>`;
+        }
+    })
+    .catch(error => {
+        document.getElementById('login-message').innerHTML = 
+            `<div class="alert alert-danger">
+                <p>Error creating account. Please try registering manually.</p>
+                <a href="register.html" class="btn btn-primary btn-sm">Register Manually</a>
+            </div>`;
+        console.error('Registration error:', error);
+    });
 }
 
