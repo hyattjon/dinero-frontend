@@ -23,7 +23,7 @@
                     <a class="nav-link" id="nav-about" href="about.html">How It Works</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="pricing.html">Pricing</a>
+                    <a class="nav-link" id="nav-pricing" href="pricing.html">Pricing</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
@@ -75,6 +75,9 @@
         } else if (currentPage === 'about.html') {
             document.getElementById('nav-about').classList.add('active');
             document.getElementById('nav-about').setAttribute('aria-current', 'page');
+        } else if (currentPage === 'pricing.html') {
+            document.getElementById('nav-pricing').classList.add('active');
+            document.getElementById('nav-pricing').setAttribute('aria-current', 'page');
         }
         
         // Initialize dropdown manually since we're loading it after Bootstrap

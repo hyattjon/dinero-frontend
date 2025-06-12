@@ -146,11 +146,16 @@
             })
             .then(data => {
                 console.log("Recommendations data:", data);
-                if (data.has_recommendations) {
+    
+                // If recommendations exist in the database
+                if (data.success && data.has_recommendations) {
                     // Update dashboard header
                     document.getElementById('dashboard-header').textContent = 'Your Card Recommendations';
                     document.getElementById('dashboard-subheader').textContent = 
                         'Based on your spending patterns, here are the best credit cards for you:';
+                    
+                    // Hide the "No Recommendations" container
+                    document.getElementById('recommendations-container').style.display = 'none';
                     
                     // Show "Analyze Again" button
                     document.getElementById('dashboard-action-area').innerHTML = `
@@ -168,17 +173,35 @@
                     // Re-initialize Plaid button after changing it
                     initPlaidButton();
                     
-                    // Display card recommendations
-                    displayRecommendations(data.recommendations.card_analysis);
+                    // Adjust this line to match your actual data structure
+                    let cardData = data.recommendations;
                     
-                    // Display spending summary
-                    displaySpendingSummary({
-                        totalSpent: data.recommendations.total_spend,
-                        transactionCount: data.recommendations.total_transactions,
-                        period: data.recommendations.analysis_period
-                    });
+                    // Log the actual structure to help debug
+                    console.log("Card data structure:", cardData);
+                    
+                    // Display using the appropriate structure
+                    if (cardData.card_analysis) {
+                        displayRecommendations(cardData.card_analysis);
+                    } else if (Array.isArray(cardData)) {
+                        displayRecommendations(cardData);
+                    } else {
+                        // If neither expected format works, try to display the raw data
+                        displayRecommendations([cardData]);
+                    }
+                    
+                    // Display spending summary if available
+                    if (cardData.total_spend !== undefined) {
+                        displaySpendingSummary({
+                            totalSpent: cardData.total_spend,
+                            transactionCount: cardData.total_transactions || 0,
+                            period: cardData.analysis_period || {
+                                start: new Date(Date.now() - 30*24*60*60*1000).toISOString().split('T')[0],
+                                end: new Date().toISOString().split('T')[0]
+                            }
+                        });
+                    }
                 } else {
-                    // No recommendations yet
+                    // No recommendations yet - show the empty state
                     document.getElementById('recommendations-container').style.display = 'block';
                     document.getElementById('recommendations-container').innerHTML = `
                         <div class="card-body text-center py-4">
@@ -195,47 +218,9 @@
             })
             .catch(error => {
                 console.error("Error fetching recommendations:", error);
-                const recommendationsContainer = document.getElementById('recommendations-container') || 
-                                               document.createElement('div');
-                
-                if (!document.getElementById('recommendations-container')) {
-                    recommendationsContainer.id = 'recommendations-container';
-                    recommendationsContainer.className = 'card shadow-lg border-0 mb-4';
-                    document.querySelector('.container.px-4.px-lg-5.my-5').appendChild(recommendationsContainer);
-                }
-                
-                recommendationsContainer.style.display = 'block';
-                recommendationsContainer.innerHTML = `
-                    <div class="card-body text-center py-4">
-                        <div class="alert alert-warning">
-                            <h4 class="mb-3">Unable to Find Recommendations</h4>
-                            <p class="mb-4">We couldn't retrieve any recommendations for your account. This could be because you haven't connected your bank account yet, or there was an issue with the connection.</p>
-                            <div class="d-flex justify-content-center">
-                                <button class="btn btn-primary px-4" id="connectBankBtn">Connect with Plaid</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                // IMPORTANT: Call initPlaidButton again to make sure the Connect Bank button works
-                initPlaidButton();
-                
-                // And manually set up the connectBankBtn handler
-                const connectBtn = document.getElementById('connectBankBtn');
-                if (connectBtn) {
-                    console.log("Setting up Connect Bank button click handler");
-                    connectBtn.addEventListener('click', function() {
-                        console.log("Connect Bank button clicked");
-                        const plaidBtn = document.getElementById('plaidBtn');
-                        if (plaidBtn) {
-                            plaidBtn.click();
-                        } else {
-                            console.error("plaidBtn not found");
-                        }
-                    });
-                } else {
-                    console.error("connectBankBtn not found after adding to DOM");
-                }
+                // Show error state
+                document.getElementById('recommendations-container').style.display = 'block';
+                // Rest of your error handling...
             });
         }
         
@@ -364,6 +349,9 @@
                                 if (data.success) {
                                     updateStatus("Analysis complete!");
                                     
+                                    // Hide the "No Recommendations" container - ADD THIS LINE
+                                    document.getElementById('recommendations-container').style.display = 'none';
+                                    
                                     // Update header with "Your Card Recommendations"
                                     document.getElementById('dashboard-header').textContent = 'Your Card Recommendations';
                                     document.getElementById('dashboard-subheader').textContent = 
@@ -436,6 +424,9 @@
             // Hide any existing recommendations
             document.getElementById('card-recommendations').style.display = 'none';
             document.getElementById('spending-summary').style.display = 'none';
+            
+            // Hide the "No Recommendations Yet" container - ADD THIS LINE
+            document.getElementById('recommendations-container').style.display = 'none';
             
             // Show loading state
             const loadingState = document.getElementById('loading-state');

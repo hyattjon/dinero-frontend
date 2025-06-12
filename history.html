@@ -100,13 +100,18 @@
                 return response.json();
             })
             .then(data => {
-                if (data.success && data.history) {
+                console.log("History API response:", data);  // Add this debug line
+    
+                if (data.success && data.history && data.history.length > 0) {
                     displayHistory(data.history);
                 } else {
-                    document.getElementById('history-table-body').innerHTML = `
-                        <tr>
-                            <td colspan="3" class="text-center">No analysis history found</td>
-                        </tr>
+                    // Show empty state
+                    document.getElementById('history-list').innerHTML = `
+                        <div class="alert alert-info">
+                            <h4 class="mb-3">No Analysis History Yet</h4>
+                            <p>You haven't performed any card analyses yet. Go to the dashboard to analyze your spending.</p>
+                            <a href="dashboard.html" class="btn btn-primary">Go to Dashboard</a>
+                        </div>
                     `;
                 }
             })
@@ -120,40 +125,42 @@
             });
         }
         
-        function displayHistory(history) {
-            if (history.length === 0) {
-                document.getElementById('history-table-body').innerHTML = `
-                    <tr>
-                        <td colspan="3" class="text-center">No analysis history found</td>
-                    </tr>
+        // Fix the displayHistory function
+        function displayHistory(historyItems) {
+            const tableBody = document.getElementById('history-table-body');
+            if (!historyItems || historyItems.length === 0) {
+                // Show empty state
+                document.getElementById('history-list').innerHTML = `
+                    <div class="alert alert-info">
+                        <h4 class="mb-3">No Analysis History Yet</h4>
+                        <p>You haven't performed any card analyses yet. Go to the dashboard to analyze your spending.</p>
+                        <a href="dashboard.html" class="btn btn-primary">Go to Dashboard</a>
+                    </div>
                 `;
                 return;
             }
             
             let html = '';
-            
-            history.forEach(item => {
-                const date = new Date(item.created_at);
-                const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
-                const status = item.is_current ? 'Current' : 'Historical';
-                const statusBadge = item.is_current 
-                    ? '<span class="badge bg-success">Current</span>' 
-                    : '<span class="badge bg-secondary">Historical</span>';
+            historyItems.forEach(item => {
+                const date = new Date(item.created_at).toLocaleDateString();
+                const status = item.is_current ? 
+                    '<span class="badge bg-success">Current</span>' : 
+                    '<span class="badge bg-secondary">Historical</span>';
                     
                 html += `
                     <tr>
-                        <td>${formattedDate}</td>
-                        <td>${statusBadge}</td>
+                        <td>${date}</td>
+                        <td>${status}</td>
                         <td>
-                            <a href="analysis.html?id=${item.id}" class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-eye me-1"></i>View Details
+                            <a href="analysis.html?id=${item.id}" class="btn btn-sm btn-primary">
+                                View Analysis
                             </a>
                         </td>
                     </tr>
                 `;
             });
             
-            document.getElementById('history-table-body').innerHTML = html;
+            tableBody.innerHTML = html;
         }
     </script>
     <!-- Components loader -->

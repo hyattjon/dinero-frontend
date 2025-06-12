@@ -15,18 +15,28 @@
         // Check authentication on page load
         document.addEventListener('DOMContentLoaded', function() {
             const token = localStorage.getItem('auth_token');
-            if (!token) {
-                // Store current page as redirect target
-                localStorage.setItem('redirect_after_login', 'pricing.html');
-                window.location.href = 'login.html';
-                return;
+            
+            // Load the appropriate header based on auth status
+            if (token) {
+                // User is authenticated - load auth header and subscription info
+                document.getElementById('header-container').innerHTML = '<div w3-include-html="components/auth-header.html"></div>';
+                loadSubscriptionInfo();
+            } else {
+                // User is not authenticated - load public header
+                document.getElementById('header-container').innerHTML = '<div w3-include-html="components/public-header.html"></div>';
+                
+                // Show generic pricing info for non-authenticated users
+                document.getElementById('subscription-controls').innerHTML = `
+                    <p>Sign in to subscribe to a plan or manage your existing subscription.</p>
+                    <a href="login.html" class="btn btn-primary">Sign In</a>
+                `;
             }
             
-            // Load subscription info
-            loadSubscriptionInfo();
-            
-            // Load plans
+            // Load plans for all users
             loadPlans();
+            
+            // Ensure components are loaded properly
+            includeHTML();
         });
         
         async function loadSubscriptionInfo() {
@@ -140,6 +150,15 @@
         async function subscribeToPlan(planId) {
             try {
                 const token = localStorage.getItem('auth_token');
+                
+                // If not authenticated, redirect to login
+                if (!token) {
+                    localStorage.setItem('redirect_after_login', 'pricing.html');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                // Continue with existing checkout code for authenticated users
                 const response = await fetch(`${CONFIG.BACKEND_URL}/create-checkout-session`, {
                     method: 'POST',
                     headers: {

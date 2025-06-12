@@ -78,6 +78,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
+            // Show loading indicator
+            document.getElementById('register-message').innerHTML = 
+                `<div class="alert alert-info">Creating your account...</div>`;
+            
             fetch(`${CONFIG.BACKEND_URL}/auth/register`, {
                 method: 'POST',
                 headers: {
@@ -86,39 +90,43 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: JSON.stringify({ name, email, password })
             })
             .then(response => {
-                // Log the raw response for debugging
-                console.log('Registration response status:', response.status);
-                
                 return response.json().then(data => {
-                    console.log('Registration response data:', data);
                     return { ...data, status: response.status, ok: response.ok };
-                }).catch(err => {
-                    console.error('Error parsing JSON response:', err);
-                    return { error: 'Invalid server response', status: response.status, ok: false };
                 });
             })
             .then(data => {
-                if (data.ok && data.success) {
-                    document.getElementById('register-message').innerHTML = 
-                        `<div class="alert alert-success">Registration successful! You can now sign in.</div>`;
+                if (data.success) {
+                    // Close the registration modal
+                    const registerModal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
+                    registerModal.hide();
                     
-                    // Close modal after 2 seconds
-                    setTimeout(() => {
-                        bootstrap.Modal.getInstance(document.getElementById('registerModal')).hide();
-                        document.getElementById('email').value = email;
-                        document.getElementById('password').value = '';
-                    }, 2000);
+                    // Show success message on the login page with Google sign-in instructions
+                    document.getElementById('login-message').innerHTML = `
+                        <div class="alert alert-success">
+                            <h5>Account Created Successfully!</h5>
+                            <p>You can now sign in with your email and password, or use the Google Sign-In button for faster access.</p>
+                            <p>Google Sign-In uses the same email address: <strong>${email}</strong></p>
+                        </div>
+                    `;
+                    
+                    // Clear the registration form
+                    document.getElementById('register-form').reset();
+                    
+                    // Optional: Add focus to the email field in the login form with the email pre-filled
+                    const loginEmail = document.getElementById('email');
+                    if (loginEmail) {
+                        loginEmail.value = email;
+                        document.getElementById('password').focus();
+                    }
                 } else {
-                    // Show the error message from the server if available
-                    const errorMessage = data.error || "Registration failed. Please try again.";
                     document.getElementById('register-message').innerHTML = 
-                        `<div class="alert alert-danger">${errorMessage}</div>`;
+                        `<div class="alert alert-danger">${data.error || 'Registration failed. Please try again.'}</div>`;
                 }
             })
             .catch(error => {
-                console.error('Registration error:', error);
+                console.error('Error:', error);
                 document.getElementById('register-message').innerHTML = 
-                    `<div class="alert alert-danger">Registration failed. Please try again later.</div>`;
+                    `<div class="alert alert-danger">An error occurred. Please try again.</div>`;
             });
         });
     }
