@@ -10,6 +10,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
     <link href="css/theme.css" rel="stylesheet" />
+    <link href="css/themes.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="js/config.js"></script>
     <script>
         // Check if user is logged in
@@ -95,6 +97,103 @@
             </div>
         </div>
     </section>
+
+    <!-- Popular Cards Section -->
+<section class="py-5">
+    <div class="container px-4 px-lg-5">
+        <h2 class="fw-bold text-center mb-5">Popular Credit Cards</h2>
+        <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-xl-3 justify-content-center">
+            <!-- Cash Back Card -->
+            <div class="col mb-5">
+                <div class="card h-100">
+                    <div class="badge bg-danger text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Popular</div>
+                    <img class="card-img-top p-3" src="./assets/chase_freedom_unlimited.png" alt="Chase Freedom Unlimited Card" />
+                    <div class="card-body p-4">
+                        <div class="text-center">
+                            <h5 class="fw-bolder">Chase Freedom Unlimited®</h5>
+                            <div class="d-flex justify-content-center small text-warning mb-2">
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-half"></i>
+                            </div>
+                            <ul class="list-unstyled text-start">
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Unlimited 1.5% cash back</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>No annual fee</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>0% intro APR for 15 months</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                        <div class="text-center"><a class="btn btn-outline-primary mt-auto" href="login.html">Get Matched</a></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Travel Card -->
+            <div class="col mb-5">
+                <div class="card h-100">
+                    <div class="badge bg-primary text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Premium</div>
+                    <img class="card-img-top p-3" src="./assets/chase_sapphire_preferred.jpeg" alt="Chase Sapphire Preferred Card" />
+                    <div class="card-body p-4">
+                        <div class="text-center">
+                            <h5 class="fw-bolder">Chase Sapphire Preferred®</h5>
+                            <div class="d-flex justify-content-center small text-warning mb-2">
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                            </div>
+                            <ul class="list-unstyled text-start">
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>2x points on travel & dining</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>60,000 point bonus offer</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>25% more value when redeeming for travel</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                        <div class="text-center"><a class="btn btn-outline-primary mt-auto" href="login.html">Get Matched</a></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Student Card -->
+            <div class="col mb-5">
+                <div class="card h-100">
+                    <div class="badge bg-success text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Students</div>
+                    <img class="card-img-top p-3" src="./assets/discover_it_student.jpeg" alt="Discover it Student Cash Back Card" />
+                    <div class="card-body p-4">
+                        <div class="text-center">
+                            <h5 class="fw-bolder">Discover it® Student Cash Back</h5>
+                            <div class="d-flex justify-content-center small text-warning mb-2">
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star"></i>
+                            </div>
+                            <ul class="list-unstyled text-start">
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>5% cash back in rotating categories</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>No annual fee</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Cash back match at end of first year</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                        <div class="text-center"><a class="btn btn-outline-primary mt-auto" href="login.html">Get Matched</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-5">
+            <p class="lead">Want to see which cards are best for YOUR spending patterns?</p>
+            <a href="login.html" class="btn btn-lg btn-primary">Get Personalized Recommendations</a>
+        </div>
+    </div>
+</section>
     <!-- Footer will be loaded here -->
     <div id="footer-container"></div>
 
@@ -102,5 +201,10 @@
     <script src="js/scripts.js"></script>
     <!-- Components loader -->
     <script src="js/components.js"></script>
+    <!-- First load theme snippets -->
+    <script src="css/themes/theme-snippets.js"></script>
+
+    <!-- Then load theme manager -->
+    <script src="js/theme-manager.js"></script>
 </body>
 </html>
